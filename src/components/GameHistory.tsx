@@ -6,11 +6,11 @@ interface HistoryItem {
     from: string;
     to: string;
     promotion?: string;
-    piece: string;
+    piece?: string;
     color: 'w' | 'b';
     flags: string;
     captured?: string;
-    san: string;
+    san?: string;
   };
   position: Record<string, any>;
 }
@@ -31,13 +31,13 @@ const GameHistory: React.FC<GameHistoryProps> = ({ history }) => {
       const { san, color } = item.move;
       
       if (color === 'w') {
-        moveRow.white = san;
+        moveRow.white = san || '';
         if (i + 1 < history.length && history[i + 1].move.color === 'b') {
           // If there's a black move following, wait to render both
           continue;
         }
       } else if (color === 'b') {
-        moveRow.black = san;
+        moveRow.black = san || '';
       }
       
       // Render row when we have a complete pair or a white move without a black follow-up
