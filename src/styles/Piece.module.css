@@ -1,0 +1,28 @@
+.piece {
+  font-size: 2.8rem;
+  z-index: 2;
+  line-height: 1;
+  user-select: none;
+  transform: translate(0, 0);
+  transition: transform 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* White pieces */
+.whitePiece {
+  color: #fff;
+  text-shadow: 0 0 2px #000, 0 0 2px #000;
+}
+
+/* Black pieces */
+.blackPiece {
+  color: #000;
+  text-shadow: 0 0 2px #fff, 0 0 2px #fff;
+}
+
+/* Subtle hover effect for pieces */
+.piece:hover {
+  transform: scale(1.1);
+} 

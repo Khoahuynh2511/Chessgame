@@ -1,0 +1,75 @@
+.historyContainer {
+  width: 100%;
+  max-width: 300px;
+  border: 2px solid #4b3621;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.historyContainer h3 {
+  background-color: #4b3621;
+  color: white;
+  padding: 10px;
+  margin: 0;
+  text-align: center;
+  border-bottom: 1px solid #333;
+}
+
+.scrollContainer {
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #4b3621 #f9f9f9;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollContainer::-webkit-scrollbar-track {
+  background: #f9f9f9;
+}
+
+.scrollContainer::-webkit-scrollbar-thumb {
+  background-color: #4b3621;
+  border-radius: 4px;
+}
+
+.historyTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.historyTable th,
+.historyTable td {
+  padding: 8px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.historyTable th {
+  background-color: #f0d9b5;
+  color: #4b3621;
+  font-weight: bold;
+}
+
+.historyTable tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.historyTable tr:hover {
+  background-color: #e9e9e9;
+}
+
+.moveNumber {
+  color: #666;
+  font-weight: bold;
+  width: 30px;
+}
+
+.move {
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+} 

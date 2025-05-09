@@ -1,0 +1,221 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background-color: #f0d9b5;
+  border: 2px solid #4b3621;
+  border-radius: 8px;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.title {
+  color: #4b3621;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #b58863;
+  padding-bottom: 10px;
+}
+
+.settingGroup {
+  margin-bottom: 20px;
+}
+
+.settingGroup h3 {
+  color: #4b3621;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.settingControls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.settingControls button {
+  background-color: #e8d0aa;
+  border: 2px solid #b58863;
+  color: #4b3621;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.settingControls button:hover {
+  background-color: #d5bd95;
+}
+
+.settingControls button.selected {
+  background-color: #b58863;
+  color: white;
+}
+
+.themeSelector {
+  display: flex;
+  gap: 15px;
+}
+
+.themeOption {
+  width: 80px;
+  height: 80px;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  border: 2px solid #4b3621;
+  overflow: hidden;
+}
+
+.themeOption::before {
+  content: '';
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  top: 0;
+  left: 0;
+  background-color: inherit;
+}
+
+.themeOption::after {
+  content: '';
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  bottom: 0;
+  right: 0;
+  background-color: inherit;
+}
+
+.classic {
+  background-color: #f0d9b5;
+}
+
+.classic::before, .classic::after {
+  background-color: #b58863;
+}
+
+.wooden {
+  background-color: #e9c496;
+}
+
+.wooden::before, .wooden::after {
+  background-color: #8b5a2b;
+}
+
+.blue {
+  background-color: #cad9e8;
+}
+
+.blue::before, .blue::after {
+  background-color: #6082b6;
+}
+
+.selectedTheme {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.toggleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #b58863;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #b58863;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.cancelButton, .saveButton {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelButton {
+  background-color: #e8d0aa;
+  border: 2px solid #b58863;
+  color: #4b3621;
+}
+
+.saveButton {
+  background-color: #4b3621;
+  border: 2px solid #4b3621;
+  color: white;
+}
+
+.cancelButton:hover {
+  background-color: #d5bd95;
+}
+
+.saveButton:hover {
+  background-color: #6d5130;
+} 

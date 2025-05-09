@@ -1,0 +1,53 @@
+.timer {
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #4b3621;
+  color: white;
+  width: 100px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  margin: 10px 0;
+  transition: all 0.3s ease;
+}
+
+.timeDisplay {
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+}
+
+.white {
+  background-color: #f0d9b5;
+  color: #4b3621;
+  border: 2px solid #4b3621;
+}
+
+.black {
+  background-color: #b58863;
+  color: white;
+  border: 2px solid #4b3621;
+}
+
+.active {
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Hiệu ứng khi thời gian còn ít */
+.timer.active[data-time-low="true"] {
+  background-color: #c53030;
+  color: white;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+} 

@@ -1,0 +1,57 @@
+.statsContainer {
+  background-color: #f0d9b5;
+  border: 2px solid #4b3621;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.statsTitle {
+  text-align: center;
+  color: #4b3621;
+  border-bottom: 1px solid #4b3621;
+  padding-bottom: 8px;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.statItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.statLabel {
+  font-weight: bold;
+  color: #4b3621;
+}
+
+.statValue {
+  color: #000;
+}
+
+.capturedPiecesContainer {
+  margin-top: 15px;
+  border-top: 1px solid #b58863;
+  padding-top: 10px;
+}
+
+.capturedSection {
+  margin-bottom: 10px;
+}
+
+.piecesRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.capturedPiece {
+  font-size: 1.5rem;
+  line-height: 1;
+} 
