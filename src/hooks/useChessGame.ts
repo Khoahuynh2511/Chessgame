@@ -1,45 +1,47 @@
-import { useState, useCallback, useEffect } from 'react';
-import { Chess, Move } from 'chess.js';
+import { useState, useEffect } from 'react';
+import { Chess, Move as ChessMove } from 'chess.js';
 
-interface HistoryItem {
-  move: {
-    from: string;
-    to: string;
-    promotion?: string;
-    piece: string;
-    color: 'w' | 'b';
-    flags: string;
-    captured?: string;
-    san: string;
-  };
-  position: Record<string, any>;
+// Mở rộng kiểu Move để bao gồm thuộc tính 'captured'
+interface ExtendedMove extends Partial<ChessMove> {
+  from: string;
+  to: string;
+  color: 'w' | 'b';
+  flags: string;
+  captured?: string;
+  san?: string;
+}
+
+interface MoveHistory {
+  move: ExtendedMove;
+  position: Record<string, { type: string; color: string }>;
 }
 
 export const useChessGame = () => {
-  const [game, setGame] = useState<Chess>(new Chess());
-  const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [currentPosition, setCurrentPosition] = useState<Record<string, any>>(game.board());
+  const [game] = useState<Chess>(new Chess());
+  const [currentPosition, setCurrentPosition] = useState<Record<string, { type: string; color: string }>>({});
+  const [history, setHistory] = useState<MoveHistory[]>([]);
   
-  // Update position when game changes
+  // Cập nhật vị trí khi component được mount
   useEffect(() => {
     updatePosition();
-  }, [game]);
+  }, []);
   
-  // Update the current position
-  const updatePosition = useCallback(() => {
-    const boardMap: Record<string, any> = {};
+  // Hàm cập nhật vị trí hiện tại
+  const updatePosition = () => {
+    const position: Record<string, { type: string; color: string }> = {};
+    
+    // Lấy vị trí hiện tại từ game
     const board = game.board();
     
-    // Convert 2D array to object with coordinates as keys
     for (let r = 0; r < 8; r++) {
       for (let f = 0; f < 8; f++) {
         const piece = board[r][f];
         if (piece) {
-          const file = String.fromCharCode(97 + f); // 'a' to 'h'
-          const rank = 8 - r; // 1 to 8
+          const file = 'abcdefgh'[f];
+          const rank = 8 - r;
           const square = `${file}${rank}`;
           
-          boardMap[square] = {
+          position[square] = {
             type: piece.type,
             color: piece.color
           };
@@ -47,186 +49,109 @@ export const useChessGame = () => {
       }
     }
     
-    setCurrentPosition(boardMap);
-  }, [game]);
+    setCurrentPosition(position);
+  };
   
-  // Make a move
-  const makeMove = useCallback((from: string, to: string, promotion?: string) => {
+  // Thực hiện nước đi
+  const makeMove = (from: string, to: string, promotion?: string) => {
     try {
-      // Check if this is a legal move
-      const moveOptions = { from, to, promotion };
-      const moveResult = game.move(moveOptions);
+      // Tạo đối tượng nước đi
+      const moveObj: {
+        from: string;
+        to: string;
+        promotion?: string;
+      } = {
+        from,
+        to
+      };
+      
+      // Thêm promotion nếu có
+      if (promotion) {
+        moveObj.promotion = promotion;
+      }
+      
+      // Thực hiện nước đi
+      const moveResult = game.move(moveObj) as unknown as ExtendedMove;
       
       if (moveResult) {
-        // Add move to history
+        // Cập nhật vị trí
+        updatePosition();
+        
+        // Cập nhật lịch sử
         setHistory(prev => [
           ...prev,
           {
             move: {
               from: moveResult.from,
               to: moveResult.to,
-              promotion: moveResult.promotion,
-              piece: moveResult.piece,
-              color: moveResult.color as 'w' | 'b',
+              color: moveResult.color,
               flags: moveResult.flags,
-              captured: moveResult.captured as string | undefined,
+              captured: moveResult.captured,
               san: moveResult.san
             },
             position: { ...currentPosition }
           }
         ]);
         
-        // Update position
-        updatePosition();
-        
         return moveResult;
       }
       
       return false;
-    } catch (e) {
-      console.error('Invalid move:', e);
+    } catch (error) {
+      console.error('Error making move:', error);
       return false;
     }
-  }, [game, currentPosition, updatePosition]);
+  };
   
-  // Undo the last move
-  const undo = useCallback(() => {
-    try {
+  // Đi lại nước trước đó
+  const undo = () => {
+    // Kiểm tra xem có thể đi lại hay không
+    if (game.history().length > 0) {
+      // Đi lại nước trước đó
       game.undo();
       
-      // Remove the last move from history
-      setHistory(prev => prev.slice(0, -1));
-      
-      // Update position
+      // Cập nhật vị trí
       updatePosition();
       
+      // Cập nhật lịch sử
+      setHistory(prev => prev.slice(0, -1));
+      
       return true;
-    } catch (e) {
-      console.error('Could not undo:', e);
-      return false;
     }
-  }, [game, updatePosition]);
+    
+    return false;
+  };
   
-  // Reset the game
-  const reset = useCallback(() => {
-    const newGame = new Chess();
-    setGame(newGame);
+  // Reset game
+  const reset = () => {
+    game.reset();
+    updatePosition();
     setHistory([]);
-    setCurrentPosition(newGame.board());
-  }, []);
+  };
   
-  // Check if a move is a pawn promotion
-  const isPromotion = useCallback((from: string, to: string): boolean => {
-    try {
-      // Get the piece at the 'from' square
-      const piece = game.get(from);
-      
-      if (!piece || piece.type !== 'p') {
-        return false;
-      }
-      
-      // Check if the move is to the last rank (1 for black, 8 for white)
-      const toRank = to.charAt(1);
-      return (piece.color === 'w' && toRank === '8') || (piece.color === 'b' && toRank === '1');
-    } catch (e) {
-      console.error('Error checking promotion:', e);
+  // Kiểm tra xem nước đi có phải là nước phong cấp không
+  const isPromotion = (from: string, to: string): boolean => {
+    // Lấy quân cờ tại vị trí from
+    const piece = game.get(from);
+    
+    // Nếu không phải là quân tốt, không thể phong cấp
+    if (!piece || piece.type !== 'p') {
       return false;
     }
-  }, [game]);
-  
-  // Get threefold repetition status
-  const isThreefoldRepetition = useCallback((): boolean => {
-    return game.isThreefoldRepetition();
-  }, [game]);
-  
-  // Get 50-move rule status
-  const isFiftyMoveDraw = useCallback((): boolean => {
-    return game.isDraw() && !game.isCheckmate() && !game.isStalemate() && !game.isThreefoldRepetition();
-  }, [game]);
-  
-  // Get insufficient material draw status
-  const isInsufficientMaterial = useCallback((): boolean => {
-    return game.isDraw() && !game.isCheckmate() && !game.isStalemate() && !game.isThreefoldRepetition() && !isFiftyMoveDraw();
-  }, [game, isFiftyMoveDraw]);
-  
-  // Check if a move results in en passant capture
-  const isEnPassant = useCallback((from: string, to: string): boolean => {
-    try {
-      // Check if this is a legal move
-      const moves = game.moves({ verbose: true }) as Move[];
-      const move = moves.find(m => m.from === from && m.to === to);
-      return move ? move.flags.includes('e') : false;
-    } catch (e) {
-      console.error('Error checking en passant:', e);
-      return false;
-    }
-  }, [game]);
-  
-  // Check if a move is a castling move
-  const isCastling = useCallback((from: string, to: string): boolean => {
-    try {
-      // Check if this is a legal move
-      const moves = game.moves({ verbose: true }) as Move[];
-      const move = moves.find(m => m.from === from && m.to === to);
-      return move ? (move.flags.includes('k') || move.flags.includes('q')) : false;
-    } catch (e) {
-      console.error('Error checking castling:', e);
-      return false;
-    }
-  }, [game]);
-  
-  // Get the legal moves for a specific square
-  const getLegalMovesForSquare = useCallback((square: string) => {
-    try {
-      const moves = game.moves({ square, verbose: true }) as Move[];
-      return moves.map(move => move.to);
-    } catch (e) {
-      console.error('Error getting legal moves:', e);
-      return [];
-    }
-  }, [game]);
-  
-  // Check if king is in check
-  const isCheck = useCallback((): boolean => {
-    return game.isCheck();
-  }, [game]);
-  
-  // Get current FEN notation
-  const getFen = useCallback((): string => {
-    return game.fen();
-  }, [game]);
-  
-  // Get current PGN notation
-  const getPgn = useCallback((): string => {
-    return game.pgn();
-  }, [game]);
-  
-  // Check if game is over
-  const isGameOver = useCallback((): boolean => {
-    return game.isCheckmate() || game.isDraw() || game.isStalemate() || game.isThreefoldRepetition();
-  }, [game]);
+    
+    // Kiểm tra xem quân tốt có đến hàng cuối cùng không
+    const rank = to.charAt(1);
+    return (piece.color === 'w' && rank === '8') || (piece.color === 'b' && rank === '1');
+  };
   
   return {
     game,
     currentPosition,
     turn: game.turn(),
-    history,
-    isGameOver,
-    isCheckmate: game.isCheckmate(),
-    isDraw: game.isDraw(),
-    isStalemate: game.isStalemate(),
-    isThreefoldRepetition,
-    isFiftyMoveDraw,
-    isInsufficientMaterial,
-    isCheck,
     makeMove,
     undo,
     reset,
-    isPromotion,
-    isEnPassant,
-    isCastling,
-    getLegalMovesForSquare,
-    getFen,
-    getPgn
+    history,
+    isPromotion
   };
 }; 
