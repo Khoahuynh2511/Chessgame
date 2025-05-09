@@ -6,13 +6,13 @@ declare module 'chess.js' {
   }
 
   export interface Move {
-    color: string;
     from: string;
     to: string;
-    flags: string;
-    piece: string;
-    san: string;
     promotion?: string;
+    piece: string;
+    color: 'w' | 'b';
+    flags: string;
+    san: string;
   }
   
   export class Chess {
@@ -21,7 +21,6 @@ declare module 'chess.js' {
     board(): Array<Array<{ type: string; color: string } | null>>;
     clear(): void;
     fen(): string;
-    game_over(): boolean;
     get(square: string): { type: string; color: string } | null;
     history(): string[];
     in_check(): boolean;
@@ -29,21 +28,23 @@ declare module 'chess.js' {
     in_draw(): boolean;
     in_stalemate(): boolean;
     in_threefold_repetition(): boolean;
+    insufficient_material(): boolean;
     isCheck(): boolean;
     isCheckmate(): boolean;
     isDraw(): boolean;
     isStalemate(): boolean;
+    isInsufficientMaterial(): boolean;
     isThreefoldRepetition(): boolean;
     load(fen: string): boolean;
-    move(move: string | { from: string; to: string; promotion?: string }): Move | null;
-    moves(options?: { square?: string; verbose?: boolean }): string[] | Move[];
+    move(move: string | { from: string; to: string; promotion?: string }): any;
+    moves(options?: { square?: string; verbose?: boolean }): any;
     pgn(): string;
     put(piece: { type: string; color: string }, square: string): boolean;
-    remove(square: string): { type: string; color: string } | null;
+    remove(square: string): boolean;
     reset(): void;
     square_color(square: string): string;
     turn(): 'w' | 'b';
-    undo(): Move | null;
+    undo(): any;
     validate_fen(fen: string): { valid: boolean; error_number: number; error: string };
   }
 } 
